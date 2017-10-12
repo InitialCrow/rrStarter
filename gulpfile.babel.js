@@ -5,6 +5,7 @@ import livereload from 'gulp-livereload'
 import webpack from 'webpack'
 import webpackConf from './webpack.config.js'
 import sass from 'gulp-sass'
+import clean from 'gulp-clean'
 
 gulp.task('webpack', function(){
 	webpack(webpackConf, function(err, stats) {
@@ -13,13 +14,21 @@ gulp.task('webpack', function(){
 	            colors: true
 	        }));
 	        return gulp.src([
-		'./dist/views/*.ejs',
+		'./dist/views/**/*.ejs',
 		])
 		.pipe(livereload())
 	    });
 })
+gulp.task('clear-cache',function(){
+	return gulp.src('./.cached_uglify')
+	.pipe(clean())
+})
+gulp.task('clear-dist',function(){
+	return gulp.src('./dist')
+	.pipe(clean())
+})
 gulp.task('sass', function () {
-  return gulp.src('./app/ressources/scss/*.scss')
+  return gulp.src('./app/ressources/scss/**/*')
     .pipe(sass().on('error', sass.logError))
     .pipe(gulp.dest('./app/ressources/css'));
 });
@@ -36,8 +45,11 @@ gulp.task('html', function(){
 gulp.task('watch', function(){
 	livereload.listen();
 	gulp.watch('./app/server.js', ['webpack'])
+	gulp.watch('./app/views/**/*', ['webpack'])
 	gulp.watch('./app/ressources/js/**/*', ['webpack'])
-	gulp.watch('./app/ressources/scss/*', ['sass'])
+	gulp.watch('./app/controllers/**/*', ['webpack'])
+	gulp.watch('./app/models/**/*', ['webpack'])
+	gulp.watch('./app/ressources/scss/**/*', ['sass','webpack'])
 })
 
 gulp.task('server', function(){
@@ -47,3 +59,4 @@ gulp.task('server', function(){
 })
 
 gulp.task('serve',['sass','server','watch'])
+gulp.task('clear',['clear-cache','clear-dist'])

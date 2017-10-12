@@ -78,7 +78,7 @@ if echo "$framework" | grep -iq "^y";then
     npm install gulp-livereload --save-dev
     npm install gulp-nodemon --save-dev
     npm install gulp-sass  --save-dev
-    npm install webpack-uglify-js-plugin --save-dev
+
  	echo''
  	echo '--> Dev dependences was installed !'
 	echo''
