@@ -27,7 +27,7 @@ if echo "$framework" | grep -iq "^y";then
 	echo''
 	echo '--> Installing babel conf ...'
 	touch .babelrc
-	echo "{\"plugins\": [\"transform-react-jsx\"],\"presets\" : [\"env\"]}" >> .babelrc
+	echo "{\"presets\" : [\"env\",\"react\"]}" >> .babelrc
 	echo''
 	npm install babel-plugin-transform-react-jsx --save-dev
 	echo''
@@ -62,27 +62,25 @@ if echo "$framework" | grep -iq "^y";then
 
 	echo '--> installing babel and webpack'
 	echo''
-	npm install babel-preset-es2015 --save-dev
+	npm install babel-preset-react --save-dev
 	npm install babel-preset-env --save-dev
 	npm install babel-core --save-dev
 	npm install babel-loader --save-dev
-	sudo npm install webpack -g --save-dev
 	npm install webpack --save-dev
+	npm install webpack-stream --save-dev
 	npm install copy-webpack-plugin --save-dev
 	npm install webpack-uglify-js-plugin --save-dev
+	npm install happypack --save-dev
 	echo''
 	echo '--> gulp dependences'
 	echo''
 	npm install gulp --save-dev
     npm install gulp-clean --save-dev
-    npm install gulp-livereload --save-dev
     npm install gulp-nodemon --save-dev
     npm install gulp-sass  --save-dev
-
  	echo''
  	echo '--> Dev dependences was installed !'
 	echo''
-
 
 else
 	echo "--> No..."
@@ -104,6 +102,7 @@ mkdir app/ressources/js/containers
 mkdir app/ressources/css
 mkdir app/ressources/assets
 
-touch app/ressources/js/index.jsx
+touch app/ressources/js/index.js
 touch app/server.js
+touch app/.config.js
 tree app

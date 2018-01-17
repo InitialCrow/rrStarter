@@ -14,12 +14,13 @@ const config =  {
 		pathinfo: true
   
  	},
- 	watch: false,
+ 	watch: true,
  module: {
  	rules: [
       		{test: /\.(js)$/, include: path.resolve(__dirname, "app/ressources/js"), exclude: /node_modules/, use: 'happypack/loader'}
    	]
 },
+
 plugins: [
 	 new HappyPack({
       loaders: [ 'babel-loader' ]
@@ -29,13 +30,13 @@ plugins: [
 
 
 		// {output}/to/file.txt 
-		{ from: '.config.js', to: __dirname+'/dist'},
-		{ from: 'ressources/css/**/*', to: __dirname+'/dist'},
-		{ from: 'ressources/assets/**/*', to: __dirname+'/dist'},
-		{ from: 'controllers/*', to: __dirname+'/dist'},
-		{ from: 'models/*', to: __dirname+'/dist'},
-		{ from: 'views/**/*', to: __dirname+'/dist'},
-		{ from: 'server.js', to: __dirname+'/dist'},
+		{ from: './.config.js', to: __dirname+'/dist'},
+		{ from: './ressources/css/**/*', to: __dirname+'/dist'},
+		{ from: './ressources/assets/**/*', to: __dirname+'/dist'},
+		{ from: './controllers/*', to: __dirname+'/dist'},
+		{ from: './models/*', to: __dirname+'/dist'},
+		{ from: './views/**/*', to: __dirname+'/dist'},
+		{ from: './server.js', to: __dirname+'/dist'},
 
 	],
 	{
@@ -46,24 +47,6 @@ plugins: [
 		// to `true` copies all files. 
 		copyUnmodified: false
 	}),
-	
-	new webpackUglifyJsPlugin({
-		cacheFolder: path.resolve(__dirname, ".cached_uglify/"),
-		debug: true,
-		minimize: true,
-		sourceMap: false,
-		output: {
-			comments: false
-		},
-		compressor: {
-		 	warnings: false
-		}
-
-	}),
-	new webpack.DefinePlugin({
-	  'process.env.NODE_ENV': JSON.stringify('production')
-	})
-
 ]
 }
 module.exports = config;
