@@ -12,7 +12,7 @@ HOW TO USE
 
 Just run `sh install.sh`in your teminal after script ask you if you want to choose install with framework or from scratch
 
-- After dependencies was installed add this lines to **package.json** (you can add other script if you need)
+- After dependencies was installed add this lines to **package.json** in "scripts" object (you can add other script if you need)
 
         "start"        : "npm-run-all --parallel watch:server watch:build",
         "watch:build"  : "webpack --config ./webpack.dev.js --watch",
