@@ -23,11 +23,11 @@ Just run `sh install.sh`in your teminal after script ask you if you want to choo
 
 now you are ready to dev with nodejs react and redux fast no ?
 
-- Just run `npm start` this will create a **dist** folder with webpack and nodemon watching
+- Just run `npm run start` this will create a **dist** folder with webpack and nodemon watching
 
 or
 
-- you can run `build:prod` to create production build in **dist** after you just need to upload dist folder on production service you can sett your env variable in **.env** file
+- you can run `npm run build:prod` to create production build in **dist** after you just need to upload dist folder on production service you can sett your env variable in **.env** file
 
 
 ## v3.0 features
