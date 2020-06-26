@@ -1,9 +1,10 @@
 const merge = require("webpack-merge");
 const common = require("./webpack.common.js");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-module.exports = merge(common, {
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const WorkboxWebpackPlugin = require ("workbox-webpack-plugin")
+
+var prodConf = {
     mode: 'production',
     devtool: 'source-map',
     module: {
@@ -17,9 +18,27 @@ module.exports = merge(common, {
         }]
     },
     plugins: [
-        new CleanWebpackPlugin(),
+       
         new MiniCssExtractPlugin({
             filename: "css/[name].css"
+        }),
+        new WorkboxWebpackPlugin.InjectManifest({
+          swSrc: './ressources/sw.js',
+          swDest: 'service-worker.js',
+          exclude: [
+            /controllers/,
+            /models/,
+            /routes/,
+            /server.js/,
+            /main.js/,
+            /admin.js/,
+          ],
+
+          maximumFileSizeToCacheInBytes: 5000000000,
         })
     ]
-});
+}
+
+module.exports = [ 
+    merge(common[0], prodConf)
+]

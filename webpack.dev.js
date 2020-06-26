@@ -1,23 +1,25 @@
 const webpack = require("webpack");
 const merge = require("webpack-merge");
 const common = require("./webpack.common.js");
-
-module.exports = merge(common, {
+var devConf = {
     mode: 'development',
     devtool: 'inline-source-map',
     module: {
-        rules: [{
-            test: /\.scss$/,
-            use: [{
-                loader: "style-loader"
-            }, {
-                loader: "css-loader"
-            }, {
-                loader: "sass-loader"
-            },]
-        }]
+        rules: [
+            {
+                test: /\.scss$/,
+                use: [{
+                    loader: "style-loader"
+                }, {
+                    loader: "css-loader"
+                }, {
+                    loader: "sass-loader"
+                },]
+            },
+            
+        ]
     },
-    plugins: [
-
-    ]
-});
+}
+module.exports = [ 
+    merge(common[0], devConf)
+]

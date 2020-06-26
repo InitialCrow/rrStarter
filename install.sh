@@ -51,7 +51,8 @@ if echo "$framework" | grep -iq "^y";then
 	touch .babelrc
 	echo "{\"presets\" : [\"react\",\"es2015\"]}" >> .babelrc
 	echo ""
-	npm install webpack webpack-cli webpack-merge webpack-dev-server --save-dev
+	npm install webpack webpack-cli webpack-merge webpack-dev-server workbox-webpack-plugin --save-dev
+
 	npm install babel-loader sass-loader css-loader style-loader --save-dev
   npm install clean-webpack-plugin mini-css-extract-plugin copy-webpack-plugin --save-dev
 else
@@ -65,17 +66,18 @@ mkdir app
 mkdir app/controllers
 mkdir app/models
 mkdir app/views
+mkdir app/routes
+
 mkdir app/ressources
 mkdir app/ressources/js
 mkdir app/ressources/js/reducers
 mkdir app/ressources/js/actions
 mkdir app/ressources/js/components
 mkdir app/ressources/js/containers
-mkdir app/ressources/css
 mkdir app/ressources/assets
 mkdir app/ressources/scss
 touch app/ressources/js/index.js
-touch app/.env
+touch .env
 cat <<EOM >app/ressources/js/index.js
 // react stuff
 import React from 'react'
@@ -121,15 +123,32 @@ app.use(express.static(DIST_DIR))
 app.set('view engine', 'ejs')
 app.set('views', DIST_DIR+'/views')
 
-app.get('/', (req, res) => {
-    res.render("index.ejs",{env:process.env.TYPE})
-})
+
+const mainroute = require('./routes/main')
+app.use(mainroute)
+
 
 const PORT = process.env.PORT || 8080
 app.listen(PORT, () => {
     console.log(\`App listening to \${PORT}....\`)
     console.log('Press Ctrl+C to quit.')
 })
+EOM
+touch app/routes/main.js
+cat <<EOM >app/routes/main.js
+var express = require('express');
+var router = express.Router();
+
+var routes = [
+	'/',
+]
+
+router.get(routes, (req, res) => {
+    res.render("index.ejs",{env:process.env.TYPE})
+})
+
+module.exports = router
+
 EOM
 touch app/views/index.ejs
 cat <<EOM >app/views/index.ejs
@@ -151,9 +170,45 @@ cat <<EOM >app/views/index.ejs
 </html>
 
 EOM
-cat <<EOM >app/.env
+cat <<EOM >.env
 TYPE="dev"
 PORT="8000"
+EOM
+
+touch app/ressources/sw.js
+cat <<EOM >app/ressources/sw.js
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js');
+workbox.core.skipWaiting();
+workbox.core.clientsClaim();
+
+
+workbox.precaching.precacheAndRoute(self.__WB_MANIFEST);
+EOM
+touch app/ressources/manifest.json
+cat <<EOM >app/ressources/manifest.json
+{
+  "short_name": "my app",
+  "name": "My app",
+  "description": "My app description",
+  "icons": [
+    {
+      "src": "/assets/images/logo-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/assets/images/logo-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/mystarturl",
+  "background_color": "#3367D6",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#3367D6"
+}
+
 EOM
 touch app/ressources/scss/main.scss
 tree app
