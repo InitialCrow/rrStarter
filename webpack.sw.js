@@ -1,6 +1,8 @@
-const merge = require("webpack-merge");
-const common = require("./webpack.common.js");
-const WorkboxWebpackPlugin = require ("workbox-webpack-plugin")
+import {merge} from "webpack-merge"
+import common from "./webpack.common.js"
+
+
+import WorkboxWebpackPlugin from "workbox-webpack-plugin"
 
 var swConf = {
     mode: 'development',
@@ -42,13 +44,13 @@ var swConf = {
             /routes/,
             /server.js/,
             /main.js/,
-            /admin.js/,
           ],
 
           maximumFileSizeToCacheInBytes: 5000000000,
         })
     ]
 }
-module.exports = [ 
-    merge(common[0], swConf)
+export default [ 
+    merge(common[0], swConf),
+   
 ]

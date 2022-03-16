@@ -1,6 +1,9 @@
-const path = require("path");
-const CopyWebpackPlugin = require('copy-webpack-plugin')
+import { resolve, dirname } from "path";
+import CopyWebpackPlugin from 'copy-webpack-plugin';
+import { fileURLToPath } from 'url';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 var config = {
     module: {
         rules: [
@@ -8,8 +11,8 @@ var config = {
                 test: /\.jsx?$/,
                 loader: 'babel-loader',
                 exclude: [/node_modules/],
-                query: {
-                    presets: ['es2015', 'react']
+                options: {
+                    presets: ["@babel/preset-env","@babel/preset-react"]
                 }
             },
             {
@@ -44,31 +47,34 @@ var config = {
         new CopyWebpackPlugin({
             // {output}/to/file.txt
             patterns:[
-                { from: 'assets/**/*', to: __dirname+'/dist', context: './ressources/', noErrorOnMissing:true},
-                { from: 'manifest.json', to: __dirname+'/dist', context: './ressources/', noErrorOnMissing:true },
-                { from: './controllers/**/*', to: __dirname+'/dist', noErrorOnMissing:true},
-                { from: './models/**/*', to: __dirname+'/dist', noErrorOnMissing:true},
-                { from: './views/**/*', to: __dirname+'/dist', noErrorOnMissing:true},
-                { from: './routes/**/*', to: __dirname+'/dist', noErrorOnMissing:true},
-                { from: './server.js', to: __dirname+'/dist', noErrorOnMissing:true},
+                { from: './assets/**/*', to: __dirname+'/dist', context: './ressources/', force:true, noErrorOnMissing: true, },
+                { from: 'manifest.json', to: __dirname+'/dist', context: './ressources/', force:true, noErrorOnMissing: true,  },
+                { from: './controllers/**/*', to: __dirname+'/dist', force:true, noErrorOnMissing: true, },
+                { from: './models/**/*', to: __dirname+'/dist', force:true, noErrorOnMissing: true, },
+                { from: './views/**/*', to: __dirname+'/dist', force:true, noErrorOnMissing: true, },
+                { from: './routes/**/*', to: __dirname+'/dist', force:true, noErrorOnMissing: true, },
+                { from: './server.js', to: __dirname+'/dist', force:true, noErrorOnMissing: true, },
             ],
             options:{
-
+                // By default, we only copy modified files during
+                // a watch or webpack-dev-server build. Setting this
+                // to `true` copies all files.
+                concurrency: 100
             }
         }),
     ]
 }
 
 var mainConfig = Object.assign({}, config, {
-    context: path.resolve(__dirname, 'app'),
+    context: resolve(__dirname, 'app'),
     name: "main",
     entry:  {main:['./ressources/js/index.js', './ressources/scss/main.scss']},
     output: {
-       path: path.resolve(__dirname, 'dist'),
+       path: resolve(__dirname, 'dist'),
        filename: "js/main.js"
     },
 });
 
 
 
-module.exports = [mainConfig]
+export default [mainConfig]

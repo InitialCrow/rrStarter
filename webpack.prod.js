@@ -1,8 +1,9 @@
-const merge = require("webpack-merge");
-const common = require("./webpack.common.js");
+import {merge} from "webpack-merge"
+import common from "./webpack.common.js"
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+const { loader } = MiniCssExtractPlugin;
 
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const WorkboxWebpackPlugin = require ("workbox-webpack-plugin")
+import WorkboxWebpackPlugin from "workbox-webpack-plugin"
 
 var prodConf = {
     mode: 'production',
@@ -11,7 +12,7 @@ var prodConf = {
         rules: [{
             test: /\.scss$/,
             use: [
-                MiniCssExtractPlugin.loader,
+                loader,
                 "css-loader",
                 "sass-loader"
             ]
@@ -39,6 +40,8 @@ var prodConf = {
     ]
 }
 
-module.exports = [ 
-    merge(common[0], prodConf)
+
+export default [ 
+    merge(common[0], prodConf),
+   
 ]

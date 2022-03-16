@@ -23,11 +23,11 @@ if echo "$framework" | grep -iq "^y";then
 	echo "--> package ready, installing..."
 	echo ""
 	npm install express --save
+	npm install express-session --save
 	npm install ejs --save
-	npm install body-parser --save
 	npm install dotenv --save
 	npm install nodemon -g --save
-  npm install npm-run-all --save
+  	npm install npm-run-all --save
 	echo ""
 	echo "express was installed! "
 	echo ""
@@ -35,6 +35,8 @@ if echo "$framework" | grep -iq "^y";then
 	echo ""
 	npm install react --save
 	npm install react-dom --save
+	npm install react-router --save
+	npm install react-router-dom --save
 	npm install redux --save
 	npm install react-redux --save
 	npm install redux-thunk --save
@@ -45,16 +47,18 @@ if echo "$framework" | grep -iq "^y";then
 	echo ""
 	echo "--> installing babel & weback..."
 	echo ""
-	npm install babel-core --save-dev
-	npm install babel-loader@7 --save-dev
-	npm install babel-preset-react babel-preset-es2015 --save-dev
+
+	npm install @babel/core --save-dev
+	npm install @babel/preset-env --save-dev
+	npm install @babel/preset-react --save-dev
+	
 	touch .babelrc
-	echo "{\"presets\" : [\"react\",\"es2015\"]}" >> .babelrc
+	echo "{\"presets\" : [\"@babel/preset-env\",\"@babel/preset-react\"]}" >> .babelrc
 	echo ""
 	npm install webpack webpack-cli webpack-merge webpack-dev-server workbox-webpack-plugin --save-dev
 
-	npm install babel-loader sass-loader css-loader style-loader --save-dev
-  npm install clean-webpack-plugin mini-css-extract-plugin copy-webpack-plugin --save-dev
+	npm install babel-loader sass-loader file-loader css-loader style-loader --save-dev
+  	npm install clean-webpack-plugin mini-css-extract-plugin copy-webpack-plugin --save-dev
 else
 	echo "--> No..."
 
@@ -78,6 +82,7 @@ mkdir app/ressources/assets
 mkdir app/ressources/scss
 touch app/ressources/js/index.js
 touch .env
+
 cat <<EOM >app/ressources/js/index.js
 // react stuff
 import React from 'react'
@@ -111,43 +116,71 @@ EOM
 
 touch app/server.js
 cat <<EOM >app/server.js
-const dotenv = require('dotenv');
-dotenv.config();
-const path = require('path');
-const express = require('express')
-const ejs = require('ejs')
 
-const app = express(), DIST_DIR = path.resolve(__dirname)
+import { resolve, dirname } from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-app.use(express.static(DIST_DIR))
+process.env.TZ = 'Europe/Paris' 
+
+import { config } from 'dotenv';
+config();
+console.log(process.env.TYPE)
+
+import express, { static as _static, urlencoded, json } from 'express';
+import ejs from 'ejs';
+import session from 'express-session';
+
+const app = express(), DIST_DIR = resolve(__dirname)
+
+
+
+app.use(_static(DIST_DIR))
+
 app.set('view engine', 'ejs')
 app.set('views', DIST_DIR+'/views')
 
+app.use('/assets', _static(__dirname + '/ressources/assets/'));
 
-const mainroute = require('./routes/main')
+
+
+
+app.use(urlencoded({ extended: true }))
+// parse application/json
+app.use(json())
+
+app.use(session({
+  secret: 'secretToken',
+  resave: false,
+  saveUninitialized: true
+}))
+
+//routes
+import mainroute from './routes/main.mjs';
+
+
 app.use(mainroute)
-
 
 const PORT = process.env.PORT || 8080
 app.listen(PORT, () => {
-    console.log(\`App listening to \${PORT}....\`)
+    console.log(\`App listenings to \${PORT}....\`)
     console.log('Press Ctrl+C to quit.')
 })
-EOM
-touch app/routes/main.js
-cat <<EOM >app/routes/main.js
-var express = require('express');
-var router = express.Router();
 
+EOM
+touch app/routes/main.mjs
+cat <<EOM >app/routes/main.mjs
+import { Router } from 'express';
+var router = Router();
 var routes = [
 	'/',
 ]
-
 router.get(routes, (req, res) => {
-    res.render("index.ejs",{env:process.env.TYPE})
+	res.render("index.ejs", { env: process.env.TYPE })
 })
 
-module.exports = router
+export default router
 
 EOM
 touch app/views/index.ejs

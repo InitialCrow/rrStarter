@@ -1,6 +1,5 @@
-const webpack = require("webpack");
-const merge = require("webpack-merge");
-const common = require("./webpack.common.js");
+import { merge } from "webpack-merge";
+import common from "./webpack.common.js";
 var devConf = {
     mode: 'development',
     devtool: 'inline-source-map',
@@ -11,15 +10,20 @@ var devConf = {
                 use: [{
                     loader: "style-loader"
                 }, {
-                    loader: "css-loader"
+                    loader: "css-loader",
+                    options: {
+
+                        url: false,
+                    }
                 }, {
                     loader: "sass-loader"
                 },]
             },
-            
+
         ]
     },
 }
-module.exports = [ 
-    merge(common[0], devConf)
+export default [ 
+    merge(common[0], devConf),
+    
 ]
